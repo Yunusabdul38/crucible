@@ -6,5 +6,10 @@ edition.workspace = true
 [lib]
 crate-type = ["cdylib", "rlib"]
 
+[features]
+default = ["derive"]
+derive = ["dep:crucible-macros"]
+
 [dependencies]
 soroban-sdk.workspace = true
+crucible-macros = { workspace = true, optional = true }
