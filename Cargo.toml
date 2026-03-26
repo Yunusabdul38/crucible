@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "contracts/crucible",
+    "crucible-macros",
 ]
 resolver = "2"
 
@@ -10,3 +11,4 @@ edition = "2021"
 
 [workspace.dependencies]
 soroban-sdk = { version = "21", features = ["testutils"] }
+crucible-macros = { path = "crucible-macros" }

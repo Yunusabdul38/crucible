@@ -1,0 +1,17 @@
+[package]
+name = "crucible-macros"
+version.workspace = true
+edition.workspace = true
+description = "Proc-macro support for the crucible Soroban testing framework."
+license = "MIT"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1"
+quote = "1"
+syn = { version = "2", features = ["full"] }
+
+[dev-dependencies]
+trybuild = { version = "1", features = ["diff"] }

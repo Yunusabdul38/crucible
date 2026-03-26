@@ -4,7 +4,10 @@
 //! for easy token operations in tests without manual WASM deployment.
 
 use crate::env::MockEnv;
-use soroban_sdk::{Address, Env, token::{TokenClient, StellarAssetClient}};
+use soroban_sdk::{
+    token::{StellarAssetClient, TokenClient},
+    Address, Env,
+};
 
 /// A mock token contract that wraps the Soroban test token utilities.
 ///
@@ -31,12 +34,14 @@ impl MockToken {
     /// ```
     pub fn xlm(env: &MockEnv) -> Self {
         // Create an admin for the XLM token
-        let _admin = env.inner().register_contract::<soroban_sdk::testutils::MockAuthContract>(
-            None,
-            soroban_sdk::testutils::MockAuthContract {},
-        );
+        let _admin = env
+            .inner()
+            .register_contract::<soroban_sdk::testutils::MockAuthContract>(
+                None,
+                soroban_sdk::testutils::MockAuthContract {},
+            );
         let sac = env.inner().register_stellar_asset_contract_v2(_admin);
-        
+
         Self {
             env: env.inner().clone(),
             address: sac.address(),
@@ -60,13 +65,15 @@ impl MockToken {
     /// ```
     pub fn new(env: &MockEnv, _symbol: &str, _decimals: u32) -> Self {
         // Create an admin for the token
-        let _admin = env.inner().register_contract::<soroban_sdk::testutils::MockAuthContract>(
-            None,
-            soroban_sdk::testutils::MockAuthContract {},
-        );
+        let _admin = env
+            .inner()
+            .register_contract::<soroban_sdk::testutils::MockAuthContract>(
+                None,
+                soroban_sdk::testutils::MockAuthContract {},
+            );
         let sac = env.inner().register_stellar_asset_contract_v2(_admin);
         let address = sac.address();
-        
+
         Self {
             env: env.inner().clone(),
             address,
@@ -205,13 +212,13 @@ mod tests {
         let env = MockEnv::builder()
             .with_account("alice", Stroops::xlm(100))
             .build();
-        
+
         let token = MockToken::xlm(&env);
         let alice = env.account("alice");
-        
+
         // Mint tokens to alice
         token.mint(&alice, 500_000);
-        
+
         // Check balance
         assert_eq!(token.balance(&alice), 500_000);
     }
@@ -222,18 +229,18 @@ mod tests {
             .with_account("alice", Stroops::xlm(100))
             .with_account("bob", Stroops::xlm(100))
             .build();
-        
+
         let token = MockToken::xlm(&env);
         let alice = env.account("alice");
         let bob = env.account("bob");
-        
+
         // Mint tokens to alice
         token.mint(&alice, 1_000_000);
         assert_eq!(token.balance(&alice), 1_000_000);
-        
+
         // Transfer from alice to bob
         token.transfer(&alice, &bob, 400_000);
-        
+
         // Verify both balances
         assert_eq!(token.balance(&alice), 600_000);
         assert_eq!(token.balance(&bob), 400_000);
@@ -245,17 +252,17 @@ mod tests {
             .with_account("alice", Stroops::xlm(100))
             .with_account("spender", Stroops::xlm(100))
             .build();
-        
+
         let token = MockToken::xlm(&env);
         let alice = env.account("alice");
         let spender = env.account("spender");
-        
+
         // Mint tokens to alice
         token.mint(&alice, 1_000_000);
-        
+
         // Approve spender
         token.approve(&alice, &spender, 500_000, 1000);
-        
+
         // Check allowance
         assert_eq!(token.allowance(&alice, &spender), 500_000);
     }
@@ -265,18 +272,18 @@ mod tests {
         let env = MockEnv::builder()
             .with_account("alice", Stroops::xlm(100))
             .build();
-        
+
         let token = MockToken::xlm(&env);
         let alice = env.account("alice");
-        
+
         // Mint tokens to alice
         token.mint(&alice, 1_000_000);
         assert_eq!(token.balance(&alice), 1_000_000);
-        
+
         // Burn some tokens (similar effect to clawback - reduces balance)
         // Note: clawback requires special issuer flags to be set on the SAC
         token.burn(&alice, 300_000);
-        
+
         // Verify balance reduced
         assert_eq!(token.balance(&alice), 700_000);
     }
@@ -286,17 +293,17 @@ mod tests {
         let env = MockEnv::builder()
             .with_account("alice", Stroops::xlm(100))
             .build();
-        
+
         let token = MockToken::xlm(&env);
         let alice = env.account("alice");
-        
+
         // Mint tokens to alice
         token.mint(&alice, 1_000_000);
         assert_eq!(token.balance(&alice), 1_000_000);
-        
+
         // Burn some tokens
         token.burn(&alice, 200_000);
-        
+
         // Verify balance reduced
         assert_eq!(token.balance(&alice), 800_000);
     }
@@ -306,13 +313,13 @@ mod tests {
         let env = MockEnv::builder()
             .with_account("alice", Stroops::xlm(100))
             .build();
-        
+
         let token = MockToken::new(&env, "USDC", 6);
         let alice = env.account("alice");
-        
+
         // Mint tokens
         token.mint(&alice, 1_000_000_000); // 1000 USDC with 6 decimals
-        
+
         assert_eq!(token.balance(&alice), 1_000_000_000);
     }
 }

@@ -3,7 +3,7 @@
 //! Provides `MockEnv` - a wrapper around `soroban_sdk::Env` with convenient
 //! helpers for testing, and `MockEnvBuilder` for fluent environment construction.
 
-use soroban_sdk::{Address, Env, testutils::Ledger};
+use soroban_sdk::{testutils::Ledger, Address, Env};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -23,22 +23,30 @@ impl Duration {
 
     /// Creates a duration from minutes.
     pub fn minutes(minutes: u64) -> Self {
-        Self { seconds: minutes * 60 }
+        Self {
+            seconds: minutes * 60,
+        }
     }
 
     /// Creates a duration from hours.
     pub fn hours(hours: u64) -> Self {
-        Self { seconds: hours * 60 * 60 }
+        Self {
+            seconds: hours * 60 * 60,
+        }
     }
 
     /// Creates a duration from days.
     pub fn days(days: u64) -> Self {
-        Self { seconds: days * 24 * 60 * 60 }
+        Self {
+            seconds: days * 24 * 60 * 60,
+        }
     }
 
     /// Creates a duration from weeks.
     pub fn weeks(weeks: u64) -> Self {
-        Self { seconds: weeks * 7 * 24 * 60 * 60 }
+        Self {
+            seconds: weeks * 7 * 24 * 60 * 60,
+        }
     }
 
     /// Returns the duration in seconds.
@@ -49,7 +57,9 @@ impl Duration {
 
 impl From<StdDuration> for Duration {
     fn from(duration: StdDuration) -> Self {
-        Self { seconds: duration.as_secs() }
+        Self {
+            seconds: duration.as_secs(),
+        }
     }
 }
 
@@ -69,12 +79,16 @@ impl Stroops {
 
     /// Creates stroops from XLM (1 XLM = 10,000,000 stroops).
     pub fn xlm(xlm: i128) -> Self {
-        Self { amount: xlm * 10_000_000 }
+        Self {
+            amount: xlm * 10_000_000,
+        }
     }
 
     /// Creates stroops with fractional XLM (e.g., 0.5 XLM).
     pub fn xlm_frac(xlm: f64) -> Self {
-        Self { amount: (xlm * 10_000_000.0) as i128 }
+        Self {
+            amount: (xlm * 10_000_000.0) as i128,
+        }
     }
 
     /// Returns the amount in stroops.
@@ -127,7 +141,7 @@ impl MockEnv {
     }
 
     /// Enable mock authorization for all calls.
-    /// 
+    ///
     /// This causes all `require_auth()` calls to succeed without valid signatures.
     pub fn mock_all_auths(&self) {
         self.inner.mock_all_auths();
@@ -238,53 +252,62 @@ impl MockEnvBuilder {
     /// Set the ledger sequence number.
     pub fn at_sequence(self, sequence: u32) -> Self {
         let info = self.env.inner.ledger().get();
-        self.env.inner.ledger().set(soroban_sdk::testutils::LedgerInfo {
-            sequence_number: sequence,
-            timestamp: info.timestamp,
-            protocol_version: info.protocol_version,
-            base_reserve: info.base_reserve,
-            network_id: info.network_id,
-            min_temp_entry_ttl: info.min_temp_entry_ttl,
-            min_persistent_entry_ttl: info.min_persistent_entry_ttl,
-            max_entry_ttl: info.max_entry_ttl,
-        });
+        self.env
+            .inner
+            .ledger()
+            .set(soroban_sdk::testutils::LedgerInfo {
+                sequence_number: sequence,
+                timestamp: info.timestamp,
+                protocol_version: info.protocol_version,
+                base_reserve: info.base_reserve,
+                network_id: info.network_id,
+                min_temp_entry_ttl: info.min_temp_entry_ttl,
+                min_persistent_entry_ttl: info.min_persistent_entry_ttl,
+                max_entry_ttl: info.max_entry_ttl,
+            });
         self
     }
 
     /// Set the ledger timestamp.
     pub fn at_timestamp(self, timestamp: u64) -> Self {
         let info = self.env.inner.ledger().get();
-        self.env.inner.ledger().set(soroban_sdk::testutils::LedgerInfo {
-            sequence_number: info.sequence_number,
-            timestamp: timestamp,
-            protocol_version: info.protocol_version,
-            base_reserve: info.base_reserve,
-            network_id: info.network_id,
-            min_temp_entry_ttl: info.min_temp_entry_ttl,
-            min_persistent_entry_ttl: info.min_persistent_entry_ttl,
-            max_entry_ttl: info.max_entry_ttl,
-        });
+        self.env
+            .inner
+            .ledger()
+            .set(soroban_sdk::testutils::LedgerInfo {
+                sequence_number: info.sequence_number,
+                timestamp,
+                protocol_version: info.protocol_version,
+                base_reserve: info.base_reserve,
+                network_id: info.network_id,
+                min_temp_entry_ttl: info.min_temp_entry_ttl,
+                min_persistent_entry_ttl: info.min_persistent_entry_ttl,
+                max_entry_ttl: info.max_entry_ttl,
+            });
         self
     }
 
     /// Set the protocol version.
     pub fn with_protocol_version(self, version: u32) -> Self {
         let info = self.env.inner.ledger().get();
-        self.env.inner.ledger().set(soroban_sdk::testutils::LedgerInfo {
-            sequence_number: info.sequence_number,
-            timestamp: info.timestamp,
-            protocol_version: version,
-            base_reserve: info.base_reserve,
-            network_id: info.network_id,
-            min_temp_entry_ttl: info.min_temp_entry_ttl,
-            min_persistent_entry_ttl: info.min_persistent_entry_ttl,
-            max_entry_ttl: info.max_entry_ttl,
-        });
+        self.env
+            .inner
+            .ledger()
+            .set(soroban_sdk::testutils::LedgerInfo {
+                sequence_number: info.sequence_number,
+                timestamp: info.timestamp,
+                protocol_version: version,
+                base_reserve: info.base_reserve,
+                network_id: info.network_id,
+                min_temp_entry_ttl: info.min_temp_entry_ttl,
+                min_persistent_entry_ttl: info.min_persistent_entry_ttl,
+                max_entry_ttl: info.max_entry_ttl,
+            });
         self
     }
 
     /// Register a contract with the environment.
-    /// 
+    ///
     /// This method registers a contract type and stores its ID for later retrieval.
     /// The contract type must implement `ContractFunctionSet`.
     pub fn with_contract<C>(self) -> Self
@@ -299,10 +322,13 @@ impl MockEnvBuilder {
     /// Add a named account with XLM balance.
     pub fn with_account(self, name: &str, balance: Stroops) -> Self {
         // Create a mock auth contract for the account
-        let address = self.env.inner.register_contract::<soroban_sdk::testutils::MockAuthContract>(
-            None,
-            soroban_sdk::testutils::MockAuthContract {},
-        );
+        let address = self
+            .env
+            .inner
+            .register_contract::<soroban_sdk::testutils::MockAuthContract>(
+                None,
+                soroban_sdk::testutils::MockAuthContract {},
+            );
         self.env.register_account(name, address);
         // Note: XLM balance tracking would require ledger entry manipulation
         // For now, we store the balance conceptually
@@ -402,9 +428,7 @@ mod tests {
 
     #[test]
     fn test_mock_env_track_costs() {
-        let env = MockEnv::builder()
-            .track_costs()
-            .build();
+        let env = MockEnv::builder().track_costs().build();
 
         assert!(env.track_costs());
     }

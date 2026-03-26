@@ -1,0 +1,9 @@
+error[E0599]: no function or associated item named `setup` found for struct `MyFixture` in the current scope
+ --> tests/ui/fail-missing-setup.rs:6:1
+  |
+6 | #[fixture]
+  | ^^^^^^^^^^ function or associated item not found in `MyFixture`
+7 | pub struct MyFixture {
+  | -------------------- function or associated item `setup` not found for this struct
+  |
+  = note: this error originates in the attribute macro `fixture` (in Nightly builds, run with -Z macro-backtrace for more info)
