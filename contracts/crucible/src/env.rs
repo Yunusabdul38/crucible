@@ -304,7 +304,7 @@ impl MockEnv {
     {
         // 1. Snapshot ledger state
         // In version 21, Env has to_snapshot and load_snapshot
-        let snapshot = self.inner.to_snapshot();
+        // let snapshot = self.inner.to_snapshot();
 
         let mut budget = self.inner.budget();
         budget.reset_default();
