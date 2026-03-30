@@ -45,8 +45,7 @@ impl Token {
         env.storage()
             .instance()
             .set(&DataKey::Balance(to.clone()), &(bal + amount));
-        env.events()
-            .publish((symbol_short!("mint"), to), amount);
+        env.events().publish((symbol_short!("mint"), to), amount);
     }
 
     /// Transfer `amount` tokens from `from` to `to`. Requires `from` auth.
@@ -89,8 +88,7 @@ impl Token {
         env.storage()
             .instance()
             .set(&DataKey::Balance(from.clone()), &(bal - amount));
-        env.events()
-            .publish((symbol_short!("burn"), from), amount);
+        env.events().publish((symbol_short!("burn"), from), amount);
     }
 
     /// Approve `spender` to spend up to `amount` tokens on behalf of `from`.

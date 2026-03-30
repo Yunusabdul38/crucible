@@ -87,8 +87,7 @@ impl Escrow {
 
     /// Arbiter approves an early release to the recipient.
     pub fn approve(env: Env, caller: Address) {
-        let mut state: EscrowState =
-            env.storage().instance().get(&DataKey::State).unwrap();
+        let mut state: EscrowState = env.storage().instance().get(&DataKey::State).unwrap();
         if state.status != EscrowStatus::Pending {
             panic!("escrow is not pending");
         }
@@ -105,8 +104,7 @@ impl Escrow {
     ///
     /// Requires either arbiter approval or that `unlock_time` has passed.
     pub fn claim(env: Env) {
-        let mut state: EscrowState =
-            env.storage().instance().get(&DataKey::State).unwrap();
+        let mut state: EscrowState = env.storage().instance().get(&DataKey::State).unwrap();
         if state.status != EscrowStatus::Pending && state.status != EscrowStatus::Approved {
             panic!("escrow already settled");
         }
@@ -123,13 +121,13 @@ impl Escrow {
             &state.recipient,
             &state.amount,
         );
-        env.events().publish((symbol_short!("claimed"),), state.amount);
+        env.events()
+            .publish((symbol_short!("claimed"),), state.amount);
     }
 
     /// Depositor reclaims funds after the time lock expires (if unclaimed).
     pub fn refund(env: Env) {
-        let mut state: EscrowState =
-            env.storage().instance().get(&DataKey::State).unwrap();
+        let mut state: EscrowState = env.storage().instance().get(&DataKey::State).unwrap();
         if state.status != EscrowStatus::Pending {
             panic!("can only refund a pending escrow");
         }
@@ -146,7 +144,8 @@ impl Escrow {
             &state.depositor,
             &state.amount,
         );
-        env.events().publish((symbol_short!("refunded"),), state.amount);
+        env.events()
+            .publish((symbol_short!("refunded"),), state.amount);
     }
 
     /// Return the current escrow state.

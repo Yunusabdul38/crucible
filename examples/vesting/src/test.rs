@@ -1,8 +1,8 @@
 #![cfg(test)]
 extern crate std;
 
-use crucible::prelude::*;
 use crucible::assert_reverts;
+use crucible::prelude::*;
 
 use crate::{Vesting, VestingClient};
 
@@ -22,8 +22,8 @@ const VEST_DAYS: u64 = 180;
 struct Ctx {
     pub env: MockEnv,
     pub id: soroban_sdk::Address,
-    pub admin: soroban_sdk::Address,
-    pub beneficiary: soroban_sdk::Address,
+    pub admin: AccountHandle,
+    pub beneficiary: AccountHandle,
     pub token: MockToken,
 }
 
@@ -57,7 +57,13 @@ impl Ctx {
             &Duration::days(VEST_DAYS).as_seconds(),
         );
 
-        Ctx { env, id, admin, beneficiary, token }
+        Ctx {
+            env,
+            id,
+            admin,
+            beneficiary,
+            token,
+        }
     }
 
     fn client(&self) -> VestingClient<'_> {

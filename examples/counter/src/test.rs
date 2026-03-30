@@ -1,9 +1,9 @@
 #![cfg(test)]
 extern crate std;
 
-use soroban_sdk::{symbol_short, Address};
 use crucible::prelude::*;
 use crucible::{assert_emitted, assert_not_emitted, assert_reverts};
+use soroban_sdk::{symbol_short, Address};
 
 use crate::{Counter, CounterClient};
 
@@ -19,9 +19,7 @@ struct Ctx {
 
 impl Ctx {
     pub fn setup() -> Self {
-        let env = MockEnv::builder()
-            .with_contract::<Counter>()
-            .build();
+        let env = MockEnv::builder().with_contract::<Counter>().build();
         let id = env.contract_id::<Counter>();
         Ctx { env, id }
     }

@@ -54,11 +54,7 @@ impl Vesting {
         duration: u64,
     ) {
         admin.require_auth();
-        token::Client::new(&env, &token).transfer(
-            &admin,
-            &env.current_contract_address(),
-            &total,
-        );
+        token::Client::new(&env, &token).transfer(&admin, &env.current_contract_address(), &total);
         env.storage().instance().set(&DataKey::Admin, &admin);
         env.storage().instance().set(
             &DataKey::Schedule,
@@ -77,8 +73,7 @@ impl Vesting {
 
     /// Return how many tokens are currently available for the beneficiary to claim.
     pub fn claimable(env: Env) -> i128 {
-        let s: VestingSchedule =
-            env.storage().instance().get(&DataKey::Schedule).unwrap();
+        let s: VestingSchedule = env.storage().instance().get(&DataKey::Schedule).unwrap();
         if s.revoked {
             return 0;
         }
@@ -88,8 +83,7 @@ impl Vesting {
 
     /// Return the total amount vested so far (includes already-claimed tokens).
     pub fn vested(env: Env) -> i128 {
-        let s: VestingSchedule =
-            env.storage().instance().get(&DataKey::Schedule).unwrap();
+        let s: VestingSchedule = env.storage().instance().get(&DataKey::Schedule).unwrap();
         Self::vested_at(&env, &s)
     }
 
@@ -97,8 +91,7 @@ impl Vesting {
     ///
     /// Only the beneficiary may call this.
     pub fn claim(env: Env) {
-        let mut s: VestingSchedule =
-            env.storage().instance().get(&DataKey::Schedule).unwrap();
+        let mut s: VestingSchedule = env.storage().instance().get(&DataKey::Schedule).unwrap();
         if s.revoked {
             panic!("vesting has been revoked");
         }
@@ -121,8 +114,7 @@ impl Vesting {
     ///
     /// Unvested tokens are returned to the admin. Admin only.
     pub fn revoke(env: Env) {
-        let mut s: VestingSchedule =
-            env.storage().instance().get(&DataKey::Schedule).unwrap();
+        let mut s: VestingSchedule = env.storage().instance().get(&DataKey::Schedule).unwrap();
         let admin: Address = env.storage().instance().get(&DataKey::Admin).unwrap();
         admin.require_auth();
         if s.revoked {

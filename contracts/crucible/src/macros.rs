@@ -1,9 +1,9 @@
 //! Assertion macros for Soroban contract testing.
 //!
 //! These macros provide ergonomic assertions for common test patterns:
-//! - [`assert_reverts!`] — assert a contract call panics (reverts)
-//! - [`assert_emitted!`] — assert a specific event was emitted
-//! - [`assert_not_emitted!`] — assert no events were emitted
+//! - `assert_reverts!` — assert a contract call panics (reverts)
+//! - `assert_emitted!` — assert a specific event was emitted
+//! - `assert_not_emitted!` — assert no events were emitted
 
 /// Asserts that a contract invocation panics (reverts).
 ///

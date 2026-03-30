@@ -1,9 +1,9 @@
 #![cfg(test)]
 extern crate std;
 
-use soroban_sdk::{symbol_short, Address};
 use crucible::prelude::*;
-use crucible::{assert_emitted, assert_not_emitted, assert_reverts};
+use crucible::{assert_emitted, assert_reverts};
+use soroban_sdk::{symbol_short, Address};
 
 use crate::{Token, TokenClient};
 
@@ -121,10 +121,7 @@ fn test_burn_more_than_balance_reverts() {
     f.env.mock_all_auths();
     let alice = f.env.account("alice");
     f.client().mint(&alice, &100_i128);
-    assert_reverts!(
-        f.client().burn(&alice, &500_i128),
-        "insufficient balance"
-    );
+    assert_reverts!(f.client().burn(&alice, &500_i128), "insufficient balance");
 }
 
 #[test]
@@ -172,12 +169,18 @@ fn test_mint_emits_event() {
 
 #[test]
 fn test_balance_query_emits_no_event() {
-    // balance() is a read-only query — it must not emit any events.
-    // Ctx::setup() only calls initialize(), which also emits nothing.
+    // balance() is a read-only query — calling it must not add new events.
+    // Capture the count before and after to check no new events were emitted
+    // (setup may emit XLM-mint events, which we don't want to interfere).
     let f = Ctx::setup();
     let alice = f.env.account("alice");
-    f.client().balance(&alice);
-    assert_not_emitted!(f.env);
+    {
+        use soroban_sdk::testutils::Events as _;
+        let before = f.env.inner().events().all().len();
+        f.client().balance(&alice);
+        let after = f.env.inner().events().all().len();
+        assert_eq!(before, after, "balance() should not emit events");
+    }
 }
 
 #[test]
@@ -193,6 +196,9 @@ fn test_xlm_token_is_independent() {
 
     f.client().mint(&alice, &250_i128);
 
-    assert_eq!(xlm.balance(&alice), 5_000_000);
+    assert_eq!(
+        xlm.balance(&alice),
+        Stroops::xlm(100).as_stroops() + 5_000_000
+    );
     assert_eq!(f.client().balance(&alice), 250);
 }

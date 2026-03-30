@@ -1,9 +1,9 @@
 #![cfg(test)]
 extern crate std;
 
-use soroban_sdk::{symbol_short, Address};
 use crucible::prelude::*;
 use crucible::{assert_emitted, assert_reverts};
+use soroban_sdk::{symbol_short, Address};
 
 use crate::{Escrow, EscrowClient, EscrowStatus};
 
@@ -18,9 +18,9 @@ const LOCK_DURATION: u64 = 86_400; // 1 day in seconds
 struct Ctx {
     pub env: MockEnv,
     pub id: Address,
-    pub depositor: Address,
-    pub recipient: Address,
-    pub arbiter: Address,
+    pub depositor: AccountHandle,
+    pub recipient: AccountHandle,
+    pub arbiter: AccountHandle,
     pub token: MockToken,
 }
 
@@ -42,7 +42,14 @@ impl Ctx {
         let token = MockToken::new(&env, "USDC", 6);
         token.mint(&depositor, AMOUNT * 2); // fund depositor generously
 
-        Ctx { env, id, depositor, recipient, arbiter, token }
+        Ctx {
+            env,
+            id,
+            depositor,
+            recipient,
+            arbiter,
+            token,
+        }
     }
 
     fn client(&self) -> EscrowClient<'_> {
