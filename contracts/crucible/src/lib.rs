@@ -1,9 +1,11 @@
+pub use soroban_sdk;
 pub mod account;
 pub mod cost;
 pub mod env;
 pub mod fixture;
 pub mod macros;
 pub mod prelude;
+pub mod sim;
 pub mod token;
 
 /// The `#[fixture]` attribute macro for defining reusable test setup structs.
